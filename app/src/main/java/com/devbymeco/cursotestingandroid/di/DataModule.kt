@@ -1,21 +1,40 @@
 package com.devbymeco.cursotestingandroid.di
 
+import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import androidx.room.Room
+import com.devbymeco.cursotestingandroid.cart.data.local.database.dao.CartItemDao
+import com.devbymeco.cursotestingandroid.cart.data.repository.CartItemRepositoryImpl
+import com.devbymeco.cursotestingandroid.cart.domain.repository.CartItemRepository
 import com.devbymeco.cursotestingandroid.core.data.coroutines.DefaultDispatchersProvider
 import com.devbymeco.cursotestingandroid.core.domain.coroutines.DispatchersProvider
+import com.devbymeco.cursotestingandroid.core.data.local.database.MiniMarketDatabase
+import com.devbymeco.cursotestingandroid.productlist.data.local.database.dao.ProductDao
+import com.devbymeco.cursotestingandroid.productlist.data.local.database.dao.PromotionDao
 import com.devbymeco.cursotestingandroid.productlist.data.repository.ProductRepositoryImpl
+import com.devbymeco.cursotestingandroid.productlist.data.repository.PromotionRepositoryImpl
+import com.devbymeco.cursotestingandroid.productlist.data.repository.SettingsRepositoryImpl
 import com.devbymeco.cursotestingandroid.productlist.domain.repository.ProductRepository
+import com.devbymeco.cursotestingandroid.productlist.domain.repository.PromotionRepository
+import com.devbymeco.cursotestingandroid.productlist.domain.repository.SettingsRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
+
+private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
 
 @Module
 @InstallIn(SingletonComponent::class)
 object DataModule {
+
     @Provides
     @Singleton
-    fun provideDispatchersProvider(defaultDispatchersProvider: DefaultDispatchersProvider): DispatchersProvider{
+    fun provideDispatchersProvider(defaultDispatchersProvider: DefaultDispatchersProvider): DispatchersProvider {
         return defaultDispatchersProvider
     }
 
@@ -25,5 +44,52 @@ object DataModule {
         return productRepositoryImpl
     }
 
+    @Provides
+    @Singleton
+    fun providePromotionRepository(promotionRepositoryImpl: PromotionRepositoryImpl): PromotionRepository {
+        return promotionRepositoryImpl
+    }
+
+    @Provides
+    fun providesProductDao(database: MiniMarketDatabase): ProductDao{
+        return database.productDao()
+    }
+
+    @Provides
+    fun providesPromotionDao(database: MiniMarketDatabase): PromotionDao{
+        return database.promotionDao()
+    }
+    @Provides
+    fun providesCartItemDao(database: MiniMarketDatabase): CartItemDao{
+        return database.cartItemDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesDatabase(@ApplicationContext context: Context):MiniMarketDatabase{
+        return Room.databaseBuilder(
+            context = context,
+            klass = MiniMarketDatabase::class.java,
+            name = "minimarket_database"
+        ).build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideDataStore(@ApplicationContext context: Context): DataStore<Preferences>{
+        return context.dataStore
+    }
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(settingsRepositoryImpl: SettingsRepositoryImpl): SettingsRepository {
+        return settingsRepositoryImpl
+    }
+
+    @Provides
+    @Singleton
+    fun provideCartRepository(cartItemRepositoryImpl: CartItemRepositoryImpl): CartItemRepository {
+        return cartItemRepositoryImpl
+    }
 
 }

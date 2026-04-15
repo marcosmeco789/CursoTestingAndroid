@@ -4,7 +4,7 @@ import com.devbymeco.cursotestingandroid.productlist.data.local.database.entity.
 import com.devbymeco.cursotestingandroid.productlist.data.remote.response.ProductResponse
 import com.devbymeco.cursotestingandroid.productlist.domain.model.Product
 
-fun ProductResponse.toEntity(): ProductEntity{
+fun ProductResponse.toEntity(): ProductEntity {
     val finalPrice = priceCents?.div(100.0) ?: 0.0
 
     return ProductEntity(
@@ -16,10 +16,11 @@ fun ProductResponse.toEntity(): ProductEntity{
         stock = stock,
         imageUrl = imageUrl
     )
+
 }
 
-fun ProductEntity.toDomain(): Product?{
-    if (category.isNullOrEmpty()) return null
+fun ProductEntity.toDomain(): Product? {
+    if(category.isNullOrEmpty()) return null
     return Product(
         id = id,
         name = name,
@@ -29,4 +30,5 @@ fun ProductEntity.toDomain(): Product?{
         stock = stock ?: 0,
         imageUrl = imageUrl
     )
+
 }

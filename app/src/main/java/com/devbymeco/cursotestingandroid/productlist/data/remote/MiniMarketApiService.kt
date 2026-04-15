@@ -5,9 +5,11 @@ import com.devbymeco.cursotestingandroid.productlist.data.remote.response.Promot
 import retrofit2.http.GET
 
 interface MiniMarketApiService {
+
     @GET("data/products.json")
     suspend fun getProducts(): ProductsResponse
 
     @GET("data/promotions.json")
     suspend fun getPromotions(): PromotionsResponse
+
 }
