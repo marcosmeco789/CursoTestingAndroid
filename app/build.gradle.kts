@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.hilt.navigation.compose)
     implementation(libs.hilt.lifecycle.viewmodel.compose)
+    testImplementation(libs.junit.junit)
     ksp(libs.hilt.compiler.ksp)
 
     // Room
@@ -104,6 +105,7 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
 
     testImplementation(libs.junit)
+    testImplementation(libs.kotlinx.coroutines.test)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
