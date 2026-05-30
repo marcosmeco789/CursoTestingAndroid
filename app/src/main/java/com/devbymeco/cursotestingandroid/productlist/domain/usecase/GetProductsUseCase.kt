@@ -1,6 +1,7 @@
 package com.devbymeco.cursotestingandroid.productlist.domain.usecase
 
 import com.devbymeco.cursotestingandroid.cart.domain.ex.activeAt
+import com.devbymeco.cursotestingandroid.core.domain.util.Clock
 import com.devbymeco.cursotestingandroid.productlist.domain.model.ProductWithPromotion
 import com.devbymeco.cursotestingandroid.productlist.domain.repository.ProductRepository
 import com.devbymeco.cursotestingandroid.productlist.domain.repository.PromotionRepository
@@ -14,7 +15,8 @@ class GetProductsUseCase @Inject constructor(
     private val productRepository: ProductRepository,
     private val promotionRepository: PromotionRepository,
     private val getPromotionForProduct: GetPromotionForProduct,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val clock: Clock
 ) {
     operator fun invoke(): Flow<List<ProductWithPromotion>> {
         return combine(
@@ -23,7 +25,7 @@ class GetProductsUseCase @Inject constructor(
             settingsRepository.inStockOnly
         ) { products, promotions, inStockOnly ->
 
-            val now = Instant.now()
+            val now = clock.now()
 
             val activePromotions = promotions.activeAt(now)
 

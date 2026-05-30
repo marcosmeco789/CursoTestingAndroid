@@ -1,10 +1,18 @@
 package com.devbymeco.cursotestingandroid.cart.domain.usecase
 
+import com.devbymeco.cursotestingandroid.cart.domain.repository.CartItemRepository
 import com.devbymeco.cursotestingandroid.core.builders.product
 import com.devbymeco.cursotestingandroid.core.domain.model.AppError
 import com.devbymeco.cursotestingandroid.core.fakes.FakeCartItemRepository
 import com.devbymeco.cursotestingandroid.core.fakes.FakeProductRepository
+import com.devbymeco.cursotestingandroid.productlist.domain.repository.ProductRepository
+import io.mockk.Runs
+import io.mockk.coEvery
+import io.mockk.coVerify
+import io.mockk.just
+import io.mockk.mockk
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.*
 import org.junit.Test
@@ -132,6 +140,54 @@ class AddToCartUseCaseTest {
         val items = fakeCartRepository.getCartItems().first()
         assertEquals(1, items.size)
         assertEquals(1, items.first().quantity)
+
+    }
+
+
+    @Test
+    fun zero_quantity_does_not_call_any_repository() = runTest {
+        // Given
+
+        val productRepository = mockk<ProductRepository>()
+        val cartRepository = mockk<CartItemRepository>()
+        val useCase = AddToCartUseCase(cartRepository, productRepository)
+
+        // When
+        runCatching { useCase("id", 0) }.exceptionOrNull()
+
+        // Then
+        coVerify(exactly = 0) { productRepository.getProductById(any()) }
+        coVerify(exactly = 0) { cartRepository.getCartItemById(any()) }
+        coVerify(exactly = 0) { cartRepository.addToCart(any(), any()) }
+    }
+
+    @Test
+    fun valid_product_calls_addToCart_with_expect_values() = runTest {
+
+        // Given
+        val productRepository = mockk<ProductRepository>()
+        val cartRepository = mockk<CartItemRepository>()
+
+        val productId = "custom-id"
+        val product = product {
+            withId(productId)
+            withStock(10)
+        }
+
+        coEvery { productRepository.getProductById(productId) } returns flowOf(product)
+        coEvery { cartRepository.getCartItemById(productId) } returns null
+        coEvery { cartRepository.addToCart(productId, 3) } just Runs
+
+        val useCase = AddToCartUseCase(cartRepository, productRepository)
+
+        // When
+        useCase(productId, 3)
+
+        // Then
+        coVerify(exactly = 1) { productRepository.getProductById(productId) }
+        coVerify(exactly = 1) { cartRepository.getCartItemById(productId) }
+        coVerify(exactly = 1) { cartRepository.addToCart(productId, 3) }
+
 
     }
 }
