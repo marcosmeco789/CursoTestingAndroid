@@ -101,6 +101,9 @@ dependencies {
     // Serialization
     implementation(libs.kotlinx.serialization.json)
 
+    //Turbine
+    testImplementation(libs.turbine)
+
     // Icons
     implementation(libs.androidx.compose.material.icons.extended)
 

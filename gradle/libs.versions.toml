@@ -21,6 +21,7 @@ coroutines = "1.10.2"
 ksp = "2.3.0"
 junitJunit = "4.12"
 mockk = "1.14.9"
+turbine = "1.2.1"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -84,6 +85,7 @@ junit-junit = { group = "junit", name = "junit", version.ref = "junitJunit" }
 #Mock
 
 mock = {group = "io.mockk", name = "mockk", version.ref = "mockk" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
